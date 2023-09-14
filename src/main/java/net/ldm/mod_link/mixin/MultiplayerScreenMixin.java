@@ -23,15 +23,13 @@ public abstract class MultiplayerScreenMixin extends Screen {
 	@Shadow
 	protected MultiplayerServerListWidget serverListWidget;
 
-	@Shadow
-	protected abstract void editEntry(boolean confirmedAction);
-
 	protected MultiplayerScreenMixin(Text title) {
 		super(title);
 	}
 
 	@Inject(at = @At("HEAD"), method="init")
 	private void addDownloadModsButton(CallbackInfo ci) {
+		// TODO: 2023-09-13 Make the button gray when server not selected (like edit, delete, join server buttons)
 		this.addDrawableChild(ButtonWidget.builder(Text.literal("Download Mods"), button -> {
 					MultiplayerServerListWidget.Entry entry = this.serverListWidget.getSelectedOrNull();
 					if (entry instanceof MultiplayerServerListWidget.ServerEntry) {
@@ -43,6 +41,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
 						ModLinkFtpClient client = new ModLinkFtpClient(selectedEntry.address, 2221);
 						System.out.println(client);
 						try {
+							// TODO: 2023-09-13 Make this the mods folder (Paths.get(System.getProperty("user.dir")).resolve("mods"))
 							client.download(Paths.get("E:\\Logan\\Downloads"));
 						} catch (IOException e) {
 							throw new RuntimeException(e);

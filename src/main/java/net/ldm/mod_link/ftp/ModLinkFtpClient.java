@@ -6,11 +6,11 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.util.FileUtils;
 
-import java.io.*;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -45,7 +45,6 @@ public class ModLinkFtpClient {
 			boolean changedRemoteDir = ftpClient.changeWorkingDirectory("E:\\Logan\\Temp\\modlink");
 			if (!changedRemoteDir) {
 				LOG.info("Failed to change working directory");
-				return;
 			}
 
 		} catch (IOException e) {
@@ -59,7 +58,7 @@ public class ModLinkFtpClient {
 			Files.deleteIfExists(file);
 			Files.createFile(file);
 			try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file.toFile()))) {
-				ftpClient.retrieveFile(file.toString(), outputStream);
+				ftpClient.retrieveFile(ftpFile.getName(), outputStream);
 				LOG.info("Downloaded {}", file.toFile().getName());
 			}
 		}
