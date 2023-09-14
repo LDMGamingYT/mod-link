@@ -6,8 +6,11 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.util.FileUtils;
 
 import java.io.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -53,11 +56,44 @@ public class ModLinkFtpClient {
 	public void download(Path to) throws IOException {
 		for (FTPFile ftpFile: ftpClient.listFiles()) {
 			Path file = to.resolve(ftpFile.getName());
+			Files.deleteIfExists(file);
 			Files.createFile(file);
 			try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file.toFile()))) {
-				boolean isFileRetrieved = ftpClient.retrieveFile(file.toString(), outputStream);
+				ftpClient.retrieveFile(file.toString(), outputStream);
 				LOG.info("Downloaded {}", file.toFile().getName());
 			}
 		}
+	}
+
+	// TODO: 2023-09-13 Fix this
+	public static ModLinkFtpClient fromIp(String ip) {
+		try {
+			// Check if the IP contains a port number (e.g., "127.0.0.1:25565")
+			/*int colonIndex = ip.lastIndexOf(':');
+			String ipAddress;
+			int port = 0;
+
+			if (colonIndex > 0 && colonIndex < ip.length() - 1) {
+				// Extract IP address and port
+				ipAddress = ip.substring(0, colonIndex);
+				port = Integer.parseInt(ip.substring(colonIndex + 1));
+			} else {
+				// No port specified, use the entire input as the IP address
+				ipAddress = ip;
+			}
+
+			// Validate and convert the IP address
+			InetAddress address = InetAddress.getByName(ipAddress);*/
+
+			// Create and return the ModLinkFtpClient instance
+			return new ModLinkFtpClient(ip, 0);
+		} catch (NumberFormatException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public String toString() {
+		return String.format("FTP Client: ftp://%s@%s", ModLinkFtpServer.USERNAME, ftpClient.getRemoteAddress());
 	}
 }

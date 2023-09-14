@@ -1,5 +1,6 @@
 package net.ldm.mod_link.mixin;
 
+import net.ldm.mod_link.ftp.ModLinkFtpClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
@@ -11,6 +12,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.io.IOException;
+import java.nio.file.Paths;
 
 @Mixin(MultiplayerScreen.class)
 public abstract class MultiplayerScreenMixin extends Screen {
@@ -35,7 +39,14 @@ public abstract class MultiplayerScreenMixin extends Screen {
 						this.selectedEntry = new ServerInfo(serverInfo.name, serverInfo.address, false);
 						this.selectedEntry.copyWithSettingsFrom(serverInfo);
 						// TODO: 2023-09-13 Add downloading mods screen
-
+						// TODO: 2023-09-13 This is temp code, replace with call to ModLinkFtpClient#fromIp
+						ModLinkFtpClient client = new ModLinkFtpClient(selectedEntry.address, 2221);
+						System.out.println(client);
+						try {
+							client.download(Paths.get("E:\\Logan\\Downloads"));
+						} catch (IOException e) {
+							throw new RuntimeException(e);
+						}
 					}
 				})
 				.dimensions(5, 5, 100, 20)
