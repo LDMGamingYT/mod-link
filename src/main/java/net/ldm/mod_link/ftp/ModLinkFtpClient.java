@@ -1,5 +1,10 @@
 package net.ldm.mod_link.ftp;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.MessageScreen;
+import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
+import net.minecraft.text.Text;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -11,6 +16,7 @@ import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -47,19 +53,23 @@ public class ModLinkFtpClient {
 				LOG.info("Failed to change working directory");
 			}
 
+		} catch (ConnectException e) {
+			LOG.warn("Could not connect to FTP server, ignoring", e);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public void download(Path to) throws IOException {
+	public void download(Path to, MinecraftClient client) throws IOException {
 		for (FTPFile ftpFile: ftpClient.listFiles()) {
 			Path file = to.resolve(ftpFile.getName());
 			Files.deleteIfExists(file);
 			Files.createFile(file);
 			try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file.toFile()))) {
+				client.setScreen(new MessageScreen(Text.literal("Downloading " + file.toFile().getName())));
 				ftpClient.retrieveFile(ftpFile.getName(), outputStream);
 				LOG.info("Downloaded {}", file.toFile().getName());
+				client.setScreen(new MultiplayerScreen(new TitleScreen()));
 			}
 		}
 	}
