@@ -47,11 +47,7 @@ public class ModLinkFtpClient {
 			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 			ftpClient.enterLocalPassiveMode();
 
-			// TODO: 2023-09-13 the workdir is temp
-			boolean changedRemoteDir = ftpClient.changeWorkingDirectory("E:\\Logan\\Temp\\modlink");
-			if (!changedRemoteDir) {
-				LOG.info("Failed to change working directory");
-			}
+			// If any issues arise, add back the "FTP client work dir" to the user's temp dir
 
 		} catch (ConnectException e) {
 			LOG.warn("Could not connect to FTP server, ignoring", e);
