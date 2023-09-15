@@ -1,7 +1,7 @@
 package net.ldm.mod_link.mixin;
 
 import net.ldm.mod_link.ftp.ModLinkFtpClient;
-import net.ldm.mod_link.screen.DownloadProgressScreen;
+import net.ldm.mod_link.screen.PromptScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
@@ -45,7 +45,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
 						try {
 							client.download(Paths.get(System.getProperty("user.dir")).resolve("mods"), this.client);
 						} catch (IOException e) {
-							this.client.setScreen(new DownloadProgressScreen("Process failed, check logs"));
+							this.client.setScreen(new PromptScreen("Process failed, check logs"));
 							ModLinkFtpClient.LOG.error(e);
 						}
 					}

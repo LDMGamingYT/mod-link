@@ -4,8 +4,8 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
-public class DownloadProgressScreen extends Screen {
-	public DownloadProgressScreen(String message) {
+public class PromptScreen extends Screen {
+	public PromptScreen(String message) {
 		super(Text.of(message));
 	}
 
