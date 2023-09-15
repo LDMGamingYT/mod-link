@@ -43,8 +43,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
 						// TODO: 2023-09-13 This is temp code, replace with call to ModLinkFtpClient#fromIp
 						ModLinkFtpClient client = new ModLinkFtpClient(selectedEntry.address, 2221);
 						try {
-							// TODO: 2023-09-13 Make this the mods folder (Paths.get(System.getProperty("user.dir")).resolve("mods"))
-							client.download(Paths.get("E:\\Logan\\Downloads"), this.client);
+							client.download(Paths.get(System.getProperty("user.dir")).resolve("mods"), this.client);
 						} catch (IOException e) {
 							this.client.setScreen(new MessageScreen(Text.literal(e.getMessage())));
 						}
