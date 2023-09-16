@@ -6,4 +6,6 @@ Upload mods to your server just like normal, but now, players can download the m
 No more hassle trying to send the mod files, just get your players to press the `Download Mods` button before connecting!
 
 ## Technical Details
-This mod uses the FTP protocol to share mods in a **read-only** enviroment across the internet. Simply define the `mod-link-port` in your `server.properties` file, and you're good to go!
+This mod uses the FTP protocol to share mods in a **read-only** environment across the internet.
+
+**You should use port `25555` for Mod Link. You can use another port, but Mod Link will NOT be able to find it automatically.**
