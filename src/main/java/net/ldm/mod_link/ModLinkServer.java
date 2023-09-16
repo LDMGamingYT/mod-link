@@ -6,6 +6,6 @@ import net.ldm.mod_link.udp.UDPServer;
 public class ModLinkServer implements DedicatedServerModInitializer {
 	@Override
 	public void onInitializeServer() {
-		UDPServer.start(2222);
+		new Thread(() -> UDPServer.start(2222), "Mod Link UDP").start();
 	}
 }

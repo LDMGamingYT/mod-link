@@ -6,6 +6,6 @@ import net.ldm.mod_link.udp.UDPClient;
 public class ModLinkClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
-		UDPClient.download(2222);
+		new Thread(() -> UDPClient.download(2222), "Mod Link UDP").start();
 	}
 }
