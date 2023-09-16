@@ -1,7 +1,9 @@
 package net.ldm.mod_link.screen;
 
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 public class PortInputScreen extends PromptScreen {
@@ -18,7 +20,10 @@ public class PortInputScreen extends PromptScreen {
 		this.textField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 106, 200, 20, this.title);
 		this.addSelectableChild(this.textField);
 
-		super.init();
+		this.addDrawableChild(ButtonWidget.builder(Text.literal("Done"), button -> saveAndClose())
+				.dimensions(this.width / 2 - 100, 156, 200, 20).build());
+		this.addDrawableChild(ButtonWidget.builder(Text.literal("Cancel"), button -> close())
+				.dimensions(this.width / 2 - 100, 181, 200, 20).build());
 	}
 
 	@Override
@@ -36,11 +41,10 @@ public class PortInputScreen extends PromptScreen {
 		return text != null ? Integer.valueOf(text) : null;
 	}
 
-	@Override
-	public void close() {
+	public void saveAndClose() {
 		super.close();
 		text = textField.getText();
-		if (listener != null) listener.onClose(getPort());
+		if (listener != null) listener.onSaveAndClose(getPort());
 	}
 
 
@@ -49,6 +53,6 @@ public class PortInputScreen extends PromptScreen {
 	}
 
 	public interface Listener {
-		void onClose(@Nullable Integer callbackInfo);
+		void onSaveAndClose(@Nullable Integer callbackInfo);
 	}
 }
