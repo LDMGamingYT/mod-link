@@ -1,10 +1,9 @@
 package net.ldm.mod_link.ftp;
 
+import net.ldm.mod_link.screen.PromptScreen;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.MessageScreen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
-import net.minecraft.text.Text;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -62,7 +61,7 @@ public class ModLinkFtpClient {
 			Files.deleteIfExists(file);
 			Files.createFile(file);
 			try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file.toFile()))) {
-				client.setScreen(new MessageScreen(Text.literal("Downloading " + file.toFile().getName())));
+				client.setScreen(new PromptScreen("Downloading " + file.toFile().getName(), PromptScreen.Type.MESSAGE));
 				ftpClient.retrieveFile(ftpFile.getName(), outputStream);
 				LOG.info("Downloaded {}", file.toFile().getName());
 				client.setScreen(new MultiplayerScreen(new TitleScreen()));
