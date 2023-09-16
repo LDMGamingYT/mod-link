@@ -29,18 +29,19 @@ public class ModLinkFtpClient {
 
 		try {
 			ftpClient.connect(ip, port);
+			int replyCode = ftpClient.getReplyCode();
 
-			int responseCode = ftpClient.getReplyCode();
-
-			if (!FTPReply.isPositiveCompletion(responseCode)) {
-				LOG.info("Connection failed: " + responseCode);
+			if (!FTPReply.isPositiveCompletion(replyCode)) {
+				LOG.info("Connection failed: " + replyCode);
 				return;
 			}
+
+			ftpClient.enterLocalActiveMode();
 
 			boolean success = ftpClient.login(ModLinkFtpServer.USERNAME, "");
 			if (!success) {
 				ftpClient.disconnect();
-				LOG.info("Could not login to the server: " + responseCode);
+				LOG.info("Could not login to the server: " + replyCode);
 				return;
 			}
 
