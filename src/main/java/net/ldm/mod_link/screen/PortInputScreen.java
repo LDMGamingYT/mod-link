@@ -4,7 +4,7 @@ public class PortInputScreen extends PromptScreen {
 	private ScreenClosedListener listener;
 
 	public PortInputScreen() {
-		super("An error has occurred, please manually specify Mod Link port.", PromptScreen.Type.INPUT_FIELD);
+		super("Couldn't find Mod Link port automatically, please manually specify it.", PromptScreen.Type.INPUT_FIELD);
 	}
 
 	public int getPort() {
