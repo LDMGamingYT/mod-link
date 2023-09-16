@@ -51,8 +51,8 @@ public abstract class MultiplayerScreenMixin extends Screen implements ScreenClo
 			this.selectedEntry = new ServerInfo(serverInfo.name, serverInfo.address, false);
 			this.selectedEntry.copyWithSettingsFrom(serverInfo);
 
-			// TODO: 2023-09-13 This is temp code, replace with call to ModLinkFtpClient#fromIp
-			ModLinkFtpClient client = new ModLinkFtpClient(selectedEntry.address, port);
+			ModLinkFtpClient client = ModLinkFtpClient.fromServerAddress(serverInfo.address, port);
+
 			try {
 				client.download(Paths.get(System.getProperty("user.dir")).resolve("mods"), this.client);
 			} catch (IOException e) {
