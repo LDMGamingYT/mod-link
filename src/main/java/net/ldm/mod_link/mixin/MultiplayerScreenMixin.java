@@ -12,6 +12,7 @@ import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -75,7 +76,14 @@ public abstract class MultiplayerScreenMixin extends Screen implements PortInput
 	}
 
 	@Override
-	public void onClose(int callbackInfo) {
-		downloadFromPort(callbackInfo);
+	public void onClose(@Nullable Integer callbackInfo) {
+		if (callbackInfo != null) downloadFromPort(callbackInfo);
+		else {
+			PortInputScreen prompt = new PortInputScreen();
+			prompt.setListener(this);
+			assert this.client != null;
+			this.client.setScreen(prompt);
+			ModLinkFtpClient.LOG.error("Screen callback info (port) is null, re-prompting user");
+		}
 	}
 }

@@ -63,7 +63,7 @@ public class ModLinkFtpClient {
 			Files.deleteIfExists(file);
 			Files.createFile(file);
 			try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file.toFile()))) {
-				client.setScreen(new PromptScreen("Downloading " + file.toFile().getName(), PromptScreen.Type.MESSAGE));
+				client.setScreen(new PromptScreen("Downloading " + file.toFile().getName()));
 				ftpClient.retrieveFile(ftpFile.getName(), outputStream);
 				LOG.info("Downloaded {}", file.toFile().getName());
 				client.setScreen(new MultiplayerScreen(new TitleScreen()));
