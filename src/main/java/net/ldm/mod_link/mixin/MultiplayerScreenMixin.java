@@ -28,6 +28,7 @@ public abstract class MultiplayerScreenMixin extends Screen implements ScreenClo
 	private ServerInfo selectedEntry;
 	@Shadow
 	protected MultiplayerServerListWidget serverListWidget;
+	private ButtonWidget downloadButton;
 
 	protected MultiplayerScreenMixin(Text title) {
 		super(title);
@@ -36,11 +37,20 @@ public abstract class MultiplayerScreenMixin extends Screen implements ScreenClo
 	@Inject(at = @At("HEAD"), method="init")
 	private void addDownloadModsButton(CallbackInfo ci) {
 		// TODO: 2023-09-13 Make the button gray when server not selected (like edit, delete, join server buttons)
-		this.addDrawableChild(ButtonWidget.builder(Text.literal("Download Mods"),
+		downloadButton = this.addDrawableChild(ButtonWidget.builder(Text.literal("Download Mods"),
 						button -> downloadFromPort(ModLinkFtpServer.PORT))
 				.dimensions(5, 5, 100, 20)
 				.build());
 	}
+
+	@Inject(at = @At("RETURN"), method = "updateButtonActivationStates")
+	protected void updateButtonActivationStates(CallbackInfo ci) {
+		this.downloadButton.active = false;
+		MultiplayerServerListWidget.Entry serverListEntry = this.serverListWidget.getSelectedOrNull();
+		if (serverListEntry != null && !(serverListEntry instanceof MultiplayerServerListWidget.ScanningEntry))
+			this.downloadButton.active = true;
+	}
+
 
 	public void downloadFromPort(int port) {
 		assert this.client != null;
