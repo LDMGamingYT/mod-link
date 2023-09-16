@@ -66,6 +66,6 @@ public abstract class MultiplayerScreenMixin extends Screen implements ScreenClo
 
 	@Override
 	public void onClose(int callbackInfo) {
-		System.out.println(callbackInfo);
+		downloadFromPort(callbackInfo);
 	}
 }
