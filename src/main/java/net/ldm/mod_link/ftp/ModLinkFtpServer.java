@@ -16,7 +16,7 @@ import java.util.List;
 
 public class ModLinkFtpServer {
 	public static final String USERNAME = "modlink";
-	public static final int PORT = 25555;
+	public static final int PORT = 25560;
 	private final FtpServer server;
 	public static final Logger LOG = LogManager.getLogger(ModLinkFtpServer.class);
 

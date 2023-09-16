@@ -36,8 +36,6 @@ public class ModLinkFtpClient {
 				return;
 			}
 
-			ftpClient.enterLocalActiveMode();
-
 			boolean success = ftpClient.login(ModLinkFtpServer.USERNAME, "");
 			if (!success) {
 				ftpClient.disconnect();
@@ -46,10 +44,7 @@ public class ModLinkFtpClient {
 			}
 
 			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-			ftpClient.enterLocalPassiveMode();
-
-			// If any issues arise, add back the "FTP client work dir" to the user's temp dir
-
+			ftpClient.enterLocalActiveMode();
 		} catch (ConnectException e) {
 			LOG.warn("Could not connect to FTP server, ignoring", e);
 		} catch (IOException e) {
