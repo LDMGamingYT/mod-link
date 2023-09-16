@@ -28,6 +28,7 @@ public class ModLinkFtpClient {
 		ftpClient = new FTPClient();
 
 		try {
+			ftpClient.enterLocalActiveMode();
 			ftpClient.connect(ip, port);
 			int replyCode = ftpClient.getReplyCode();
 
@@ -44,7 +45,6 @@ public class ModLinkFtpClient {
 			}
 
 			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-			ftpClient.enterLocalActiveMode();
 		} catch (ConnectException e) {
 			LOG.warn("Could not connect to FTP server, ignoring", e);
 		} catch (IOException e) {
