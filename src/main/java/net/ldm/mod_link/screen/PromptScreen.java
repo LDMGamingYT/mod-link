@@ -11,6 +11,7 @@ public class PromptScreen extends Screen {
 	private final Type type;
 	private TextFieldWidget textField;
 	private @Nullable String text;
+	private ScreenClosedListener listener;
 
 	public PromptScreen(String message, Type type) {
 		super(Text.of(message));
@@ -37,8 +38,10 @@ public class PromptScreen extends Screen {
 
 	@Override
 	public void close() {
-		text = textField != null ? textField.getText() : null;
+		text = textField.getText();
 		super.close();
+
+		if (listener != null) listener.onClose();
 	}
 
 	/**
@@ -54,5 +57,9 @@ public class PromptScreen extends Screen {
 		context.drawCenteredTextWithShadow(textRenderer, this.title, this.width / 2, 70, 0xFFFFFF);
 		if (type == Type.INPUT_FIELD) this.textField.render(context, mouseX, mouseY, delta);
 		super.render(context, mouseX, mouseY, delta);
+	}
+
+	public void setListener(ScreenClosedListener listener) {
+		this.listener = listener;
 	}
 }
