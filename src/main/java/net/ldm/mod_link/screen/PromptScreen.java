@@ -6,6 +6,8 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
 public class PromptScreen extends Screen {
+	private Listener listener;
+
 	public PromptScreen(String message) {
 		super(Text.of(message));
 	}
@@ -21,5 +23,20 @@ public class PromptScreen extends Screen {
 		this.renderBackground(context);
 		context.drawCenteredTextWithShadow(textRenderer, this.title, this.width / 2, 70, 0xFFFFFF);
 		super.render(context, mouseX, mouseY, delta);
+	}
+
+	@Override
+	public void close() {
+		super.close();
+		if (listener != null) listener.onClose();
+	}
+
+
+	public void setListener(Listener listener) {
+		this.listener = listener;
+	}
+
+	public interface Listener {
+		void onClose();
 	}
 }

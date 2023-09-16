@@ -5,7 +5,6 @@ import net.fabricmc.api.Environment;
 import net.ldm.mod_link.ftp.ModLinkFtpClient;
 import net.ldm.mod_link.ftp.ModLinkFtpServer;
 import net.ldm.mod_link.screen.PortInputScreen;
-import net.ldm.mod_link.screen.PortInputScreenListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
@@ -24,7 +23,7 @@ import java.nio.file.Paths;
 
 @Environment(EnvType.CLIENT)
 @Mixin(MultiplayerScreen.class)
-public abstract class MultiplayerScreenMixin extends Screen implements PortInputScreenListener {
+public abstract class MultiplayerScreenMixin extends Screen implements PortInputScreen.Listener {
 	@Shadow
 	private ServerInfo selectedEntry;
 	@Shadow

@@ -5,7 +5,7 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import org.jetbrains.annotations.Nullable;
 
 public class PortInputScreen extends PromptScreen {
-	private PortInputScreenListener listener;
+	private Listener listener;
 	private TextFieldWidget textField;
 	private @Nullable String text;
 
@@ -26,6 +26,12 @@ public class PortInputScreen extends PromptScreen {
 		this.textField.tick();
 	}
 
+	@Override
+	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+		super.render(context, mouseX, mouseY, delta);
+		this.textField.render(context, mouseX, mouseY, delta);
+	}
+
  	public @Nullable Integer getPort() {
 		return text != null ? Integer.valueOf(text) : null;
 	}
@@ -37,13 +43,12 @@ public class PortInputScreen extends PromptScreen {
 		if (listener != null) listener.onClose(getPort());
 	}
 
-	@Override
-	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-		super.render(context, mouseX, mouseY, delta);
-		this.textField.render(context, mouseX, mouseY, delta);
+
+	public void setListener(Listener listener) {
+		this.listener = listener;
 	}
 
-	public void setListener(PortInputScreenListener listener) {
-		this.listener = listener;
+	public interface Listener {
+		void onClose(@Nullable Integer callbackInfo);
 	}
 }
