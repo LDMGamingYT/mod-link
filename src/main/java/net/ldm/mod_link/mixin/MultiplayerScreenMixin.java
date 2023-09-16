@@ -5,7 +5,6 @@ import net.fabricmc.api.Environment;
 import net.ldm.mod_link.ftp.ModLinkFtpClient;
 import net.ldm.mod_link.ftp.ModLinkFtpServer;
 import net.ldm.mod_link.screen.PortInputScreen;
-import net.ldm.mod_link.screen.PromptScreen;
 import net.ldm.mod_link.screen.ScreenClosedListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
@@ -66,7 +65,7 @@ public abstract class MultiplayerScreenMixin extends Screen implements ScreenClo
 	}
 
 	@Override
-	public void onClose() {
-		System.out.println("Screen closed!");
+	public void onClose(int callbackInfo) {
+		System.out.println(callbackInfo);
 	}
 }
