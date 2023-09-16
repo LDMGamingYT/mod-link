@@ -75,7 +75,7 @@ public abstract class MultiplayerScreenMixin extends Screen implements PortInput
 	}
 
 	@Override
-	public void onClose(@Nullable Integer callbackInfo) {
+	public void onSaveAndClose(@Nullable Integer callbackInfo) {
 		if (callbackInfo != null) downloadFromPort(callbackInfo);
 		else {
 			PortInputScreen prompt = new PortInputScreen();
