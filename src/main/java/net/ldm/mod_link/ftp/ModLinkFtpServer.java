@@ -1,5 +1,6 @@
 package net.ldm.mod_link.ftp;
 
+import org.apache.ftpserver.DataConnectionConfigurationFactory;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory;
@@ -24,6 +25,8 @@ public class ModLinkFtpServer {
 
 		ListenerFactory factory = new ListenerFactory();
 		factory.setPort(PORT);
+
+		factory.setDataConnectionConfiguration(new DataConnectionConfigurationFactory().createDataConnectionConfiguration());
 
 		FileSystemFactory fileSystemFactory = new NativeFileSystemFactory() {
 			@Override
