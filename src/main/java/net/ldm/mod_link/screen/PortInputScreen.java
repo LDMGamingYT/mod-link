@@ -1,7 +1,7 @@
 package net.ldm.mod_link.screen;
 
 public class PortInputScreen extends PromptScreen {
-	private ScreenClosedListener listener;
+	private PortInputScreenListener listener;
 
 	public PortInputScreen() {
 		super("Couldn't find Mod Link port automatically, please manually specify it.", PromptScreen.Type.INPUT_FIELD);
@@ -18,7 +18,7 @@ public class PortInputScreen extends PromptScreen {
 		if (listener != null) listener.onClose(getPort());
 	}
 
-	public void setListener(ScreenClosedListener listener) {
+	public void setListener(PortInputScreenListener listener) {
 		this.listener = listener;
 	}
 }

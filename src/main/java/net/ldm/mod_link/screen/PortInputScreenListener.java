@@ -1,5 +1,5 @@
 package net.ldm.mod_link.screen;
 
-public interface ScreenClosedListener {
+public interface PortInputScreenListener {
 	void onClose(int callbackInfo);
 }
