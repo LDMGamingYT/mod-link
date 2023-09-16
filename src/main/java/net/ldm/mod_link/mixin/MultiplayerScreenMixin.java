@@ -1,6 +1,7 @@
 package net.ldm.mod_link.mixin;
 
 import net.ldm.mod_link.ftp.ModLinkFtpClient;
+import net.ldm.mod_link.ftp.ModLinkFtpServer;
 import net.ldm.mod_link.screen.PromptScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
@@ -41,7 +42,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
 						this.selectedEntry.copyWithSettingsFrom(serverInfo);
 
 						// TODO: 2023-09-13 This is temp code, replace with call to ModLinkFtpClient#fromIp
-						ModLinkFtpClient client = new ModLinkFtpClient(selectedEntry.address, 12281);
+						ModLinkFtpClient client = new ModLinkFtpClient(selectedEntry.address, ModLinkFtpServer.PORT);
 						try {
 							client.download(Paths.get(System.getProperty("user.dir")).resolve("mods"), this.client);
 						} catch (IOException e) {

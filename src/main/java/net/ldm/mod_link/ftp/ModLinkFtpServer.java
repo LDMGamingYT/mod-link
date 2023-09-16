@@ -7,19 +7,23 @@ import org.apache.ftpserver.ftplet.*;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
 import org.apache.ftpserver.usermanager.impl.BaseUser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ModLinkFtpServer {
 	public static final String USERNAME = "modlink";
+	public static final int PORT = 25555;
 	private final FtpServer server;
+	public static final Logger LOG = LogManager.getLogger(ModLinkFtpServer.class);
 
-	public ModLinkFtpServer(int port, String path) {
+	public ModLinkFtpServer(String path) {
 		FtpServerFactory serverFactory = new FtpServerFactory();
 
 		ListenerFactory factory = new ListenerFactory();
-		factory.setPort(port);
+		factory.setPort(PORT);
 
 		FileSystemFactory fileSystemFactory = new NativeFileSystemFactory() {
 			@Override
@@ -53,11 +57,13 @@ public class ModLinkFtpServer {
 		serverFactory.setUserManager(userManager);
 
 		server = serverFactory.createServer();
+		LOG.info("Created Mod Link FTP server on port {}", PORT);
 	}
 
 	public void start() {
 		try {
 			server.start();
+			LOG.info("Started Mod Link FTP server on port {}", PORT);
 		} catch (FtpException e) {
 			throw new RuntimeException(e);
 		}

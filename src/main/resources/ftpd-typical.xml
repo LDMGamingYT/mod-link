@@ -1,0 +1,8 @@
+<listeners>
+    <nio-listener name="default" port="25555" idle-timeout="60">
+        <data-connection idle-timeout="60">
+            <active enabled="true" local-port="25555" ip-check="true"/>
+            <passive ports="25555"/>
+        </data-connection>
+    </nio-listener>
+</listeners>
