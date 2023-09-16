@@ -20,7 +20,7 @@ public class PortInputScreen extends PromptScreen {
 		this.textField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 106, 200, 20, this.title);
 		this.addSelectableChild(this.textField);
 
-		this.addDrawableChild(ButtonWidget.builder(Text.literal("Done"), button -> saveAndClose())
+		this.addDrawableChild(ButtonWidget.builder(Text.literal("Connect"), button -> saveAndClose())
 				.dimensions(this.width / 2 - 100, 156, 200, 20).build());
 		this.addDrawableChild(ButtonWidget.builder(Text.literal("Cancel"), button -> close())
 				.dimensions(this.width / 2 - 100, 181, 200, 20).build());
