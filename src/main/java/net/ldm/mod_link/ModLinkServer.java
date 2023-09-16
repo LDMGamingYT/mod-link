@@ -1,14 +1,11 @@
 package net.ldm.mod_link;
 
 import net.fabricmc.api.DedicatedServerModInitializer;
-import net.ldm.mod_link.ftp.ModLinkFtpServer;
-
-import java.nio.file.Paths;
+import net.ldm.mod_link.udp.UDPServer;
 
 public class ModLinkServer implements DedicatedServerModInitializer {
-
 	@Override
 	public void onInitializeServer() {
-		new ModLinkFtpServer(Paths.get(System.getProperty("user.dir")).resolve("mods").toString()).start();
+		UDPServer.start(2222);
 	}
 }

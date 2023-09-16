@@ -11,7 +11,8 @@
 	"icon": "assets/mod-link/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"server": [ "net.ldm.mod_link.ModLinkServer" ]
+		"server": [ "net.ldm.mod_link.ModLinkServer" ],
+		"client": [ "net.ldm.mod_link.ModLinkClient" ]
 	},
 	"mixins": [
 		"mod-link.mixins.json"

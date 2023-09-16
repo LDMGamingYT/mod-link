@@ -9,9 +9,11 @@ No more hassle trying to send the mod files, just get your players to press the 
 
 ## Technical Details
 
-This mod uses the FTP protocol to share mods in a **read-only** environment across the internet.
+This mod uses the UDP protocol to share mods in a **read-only** environment across the internet.
 
 **You should use port `25560` for Mod Link. You can use another port, but Mod Link will NOT be able to find it automatically.**
+
+**TODO:** Change this to the correct documentation if UDP works
 
 ### Using another port
 
