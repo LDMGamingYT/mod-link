@@ -50,7 +50,7 @@ public class ModFilePacketParser {
 
 		for (int startIndex: mods) {
 			int headerLength = getLengthOfSection(startIndex, START_OF_FILE);
-			int fileLength = getLengthOfSection(startIndex+headerLength, END_OF_FILE);
+			int fileLength = getLengthOfSection(startIndex+headerLength+HEADER_SIZE, END_OF_FILE);
 
 			if (fileLength == -1) continue;
 
