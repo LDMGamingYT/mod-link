@@ -63,7 +63,7 @@ public class ModLinkClient implements ClientModInitializer {
 			try {
 				writeFiles(parser.getFiles());
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+				disconnect(client, new PromptScreen("Failed to write mod files: " + e.getMessage(), new MultiplayerScreen(new TitleScreen())));
 			}
 		});
 	}
