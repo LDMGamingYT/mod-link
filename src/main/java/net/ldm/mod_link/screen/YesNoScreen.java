@@ -12,6 +12,11 @@ public class YesNoScreen extends PromptScreen {
 	}
 
 	@Override
+	public boolean shouldCloseOnEsc() {
+		return false;
+	}
+
+	@Override
 	protected void init() {
 		this.addDrawableChild(ButtonWidget.builder(Text.literal("Yes"), button -> listener.onYesButtonPressed())
 				.dimensions(this.width / 2 - 100 - 5, 156, 100, 20).build());
