@@ -5,6 +5,8 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.ldm.mod_link.networking.packet.PacketChannels;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -13,6 +15,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class ModLinkServer implements DedicatedServerModInitializer {
+	public static final Logger LOG = LogManager.getLogger(ModLinkServer.class);
 	private static final File MODS_DIR = Paths.get(System.getProperty("user.dir")).resolve("mods").toFile();
 	private static final byte[] START_OF_HEADER = { 0x04, 0x02, 0x01 };
 	private static final byte[] START_OF_FILE = { 0x04, 0x02, 0x02 };
@@ -23,7 +26,7 @@ public class ModLinkServer implements DedicatedServerModInitializer {
 		ServerPlayNetworking.registerGlobalReceiver(PacketChannels.ASK_SERVER_FOR_MODS, (server, player, handler, buf, responseSender) -> {
 			try {
 				for (byte[] bytes: readMods()) {
-					System.out.printf("Sending %s bytes%n", bytes.length);
+					LOG.info("Sending {} bytes", bytes.length);
 					ServerPlayNetworking.send(player, PacketChannels.MOD_FILE, PacketByteBufs.create().writeByteArray(bytes));
 				}
 			} catch (IOException e) {
