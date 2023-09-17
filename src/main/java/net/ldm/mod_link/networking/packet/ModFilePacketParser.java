@@ -50,13 +50,13 @@ public class ModFilePacketParser {
 
 		for (int startIndex: mods) {
 			int headerLength = getLengthOfSection(startIndex, START_OF_FILE);
-			int fileLength = getLengthOfSection(startIndex+headerLength+HEADER_SIZE, END_OF_FILE);
+			int fileLength = getLengthOfSection(startIndex+headerLength, END_OF_FILE)-HEADER_SIZE;
 
 			if (fileLength == -1) continue;
 
 			byte[] contentBytes = new byte[fileLength];
 			for (int j = 0; j < fileLength; j++) {
-				contentBytes[j] = packet.get((startIndex+headerLength) + j);
+				contentBytes[j] = packet.get((startIndex+headerLength+HEADER_SIZE) + j);
 			}
 
 			if (startIndex == -1 || headerLength == -1) out.put("unknown-mod-" + UUID.randomUUID(), contentBytes);
@@ -74,11 +74,11 @@ public class ModFilePacketParser {
 	/**
 	 * @return Index of where the data starts. Example: [4, 2, 3, 0, 0, 0, 0], index would be 3.
 	 */
-	private int getIndexOfSection(byte[] header, int i) {
+	private int getIndexOfSection(int i) {
 		while (i + HEADER_SIZE < packet.size()) {
-			if (packet.get(i) == header[0] &&
-				packet.get(i+1) == header[1] &&
-				packet.get(i+2) == header[2])
+			if (packet.get(i) == ModFilePacketParser.START_OF_HEADER[0] &&
+				packet.get(i+1) == ModFilePacketParser.START_OF_HEADER[1] &&
+				packet.get(i+2) == ModFilePacketParser.START_OF_HEADER[2])
 				return i+3;
 			i++;
 		}
@@ -104,7 +104,7 @@ public class ModFilePacketParser {
 		int i = 0;
 		int j = 0;
 		while (j != -1) {
-			j = getIndexOfSection(START_OF_HEADER, i);
+			j = getIndexOfSection(i);
 			if (j != -1) {
 				i = j;
 				out.add(i);
