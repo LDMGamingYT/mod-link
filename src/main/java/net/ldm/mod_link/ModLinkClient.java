@@ -24,5 +24,9 @@ public class ModLinkClient implements ClientModInitializer {
 				askingServerForMods = false;
 			}
 		});
+
+		ClientPlayNetworking.registerGlobalReceiver(PacketChannels.MOD_FILE, (client, handler, buf, responseSender) -> {
+			System.out.printf("Received %s bytes%n", buf.readByteArray().length);
+		});
 	}
 }
