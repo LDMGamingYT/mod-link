@@ -8,8 +8,6 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.ldm.mod_link.networking.packet.ModFilePacketParser;
 import net.ldm.mod_link.networking.packet.PacketChannels;
-import net.minecraft.client.gui.screen.MessageScreen;
-import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

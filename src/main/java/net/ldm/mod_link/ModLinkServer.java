@@ -7,7 +7,7 @@ import net.ldm.mod_link.networking.packet.PacketChannels;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +27,13 @@ public class ModLinkServer implements DedicatedServerModInitializer {
 	public void onInitializeServer() {
 		ServerPlayNetworking.registerGlobalReceiver(PacketChannels.ASK_SERVER_FOR_MODS, (server, player, handler, buf, responseSender) -> {
 			try {
-				for (byte[] bytes: readMods()) {
+				Set<byte[]> packet = readMods();
+				if (packet == null) {
+					ServerPlayNetworking.send(player, PacketChannels.MOD_FILE, PacketByteBufs.empty());
+					return;
+				}
+
+				for (byte[] bytes: packet) {
 					LOG.info("Sending {} bytes", bytes.length);
 					ServerPlayNetworking.send(player, PacketChannels.MOD_FILE, PacketByteBufs.create().writeByteArray(bytes));
 				}
@@ -37,13 +43,16 @@ public class ModLinkServer implements DedicatedServerModInitializer {
 		});
 	}
 
-	private @NotNull Set<byte[]> readMods() throws IOException {
+	private @Nullable Set<byte[]> readMods() throws IOException {
 		Set<byte[]> out = new HashSet<>();
 		int totalSize = 0;
+		File[] mods = Objects.requireNonNull(MODS_DIR.listFiles());
 
-		for (File modFile: Objects.requireNonNull(MODS_DIR.listFiles())) {
-			byte[] fileData = FileUtils.readFileToByteArray(modFile);
-			byte[] fileNameBytes = modFile.getName().getBytes();
+		if (mods.length == 0) return null;
+
+		for (File mod: mods) {
+			byte[] fileData = FileUtils.readFileToByteArray(mod);
+			byte[] fileNameBytes = mod.getName().getBytes();
 
 			byte[] result = new byte[HEADER_SIZE + fileNameBytes.length + HEADER_SIZE + fileData.length + HEADER_SIZE];
 
