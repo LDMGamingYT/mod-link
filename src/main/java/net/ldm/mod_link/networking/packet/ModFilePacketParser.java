@@ -15,7 +15,7 @@ public class ModFilePacketParser {
 	public static final byte[] START_OF_SIZE_HEADER = {0x04, 0x02, 0x03};
 	public static final byte[] END_OF_FILE = {0x04, 0x03, 0x02};
 	public static final int HEADER_SIZE = 3;
-	public static final int SIZE_HEADER_SIZE = HEADER_SIZE + Integer.BYTES + HEADER_SIZE;
+	public static final int SIZE_HEADER_SIZE = HEADER_SIZE + Integer.BYTES;
 
 	public ModFilePacketParser(ArrayList<Byte> packet, int totalSize) {
 		this.packet = packet;
