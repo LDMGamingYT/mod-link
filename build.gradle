@@ -18,10 +18,6 @@ repositories {
 	// for more information about repositories.
 }
 
-configurations {
-	jarImplementation
-}
-
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -35,10 +31,6 @@ dependencies {
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 
 	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
-	jarImplementation "org.apache.ftpserver:ftpserver:1.2.0"
-	jarImplementation 'commons-net:commons-net:3.9.0'
-	implementation "org.apache.ftpserver:ftpserver:1.2.0"
-	implementation 'commons-net:commons-net:3.9.0'
 }
 
 processResources {
@@ -67,9 +59,6 @@ jar {
 	duplicatesStrategy = DuplicatesStrategy.WARN
 	from("LICENSE") {
 		rename { "${it}_${project.base.archivesName.get()}"}
-	}
-	from {
-		configurations.jarImplementation.collect { it.isDirectory() ? it : zipTree(it) }
 	}
 }
 

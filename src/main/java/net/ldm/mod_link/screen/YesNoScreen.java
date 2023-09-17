@@ -1,13 +1,14 @@
 package net.ldm.mod_link.screen;
 
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
 public class YesNoScreen extends PromptScreen {
 	private Listener listener;
 
-	public YesNoScreen(String message) {
-		super(message);
+	public YesNoScreen(String message, Screen parent) {
+		super(message, parent);
 	}
 
 	@Override

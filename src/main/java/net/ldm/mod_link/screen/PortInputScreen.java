@@ -1,6 +1,7 @@
 package net.ldm.mod_link.screen;
 
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
@@ -11,8 +12,8 @@ public class PortInputScreen extends PromptScreen {
 	private TextFieldWidget textField;
 	private @Nullable String text;
 
-	public PortInputScreen() {
-		super("Couldn't find Mod Link port automatically, please manually specify it.");
+	public PortInputScreen(Screen parent) {
+		super("Couldn't find Mod Link port automatically, please manually specify it.", parent);
 	}
 
 	@Override
