@@ -84,11 +84,15 @@ public class ModLinkServer implements DedicatedServerModInitializer {
 				System.arraycopy(result, start, part, 0, length);
 
 				out.add(part);
-				totalSize += length + SIZE_HEADER_SIZE;
+				totalSize += length;
 			}
 		}
 
+		totalSize += SIZE_HEADER_SIZE;
+
 		byte[] sizeHeader = new byte[SIZE_HEADER_SIZE];
+
+		System.out.println("we are sending " + totalSize + " as the total size");
 
 		System.arraycopy(START_OF_SIZE_HEADER, 0, sizeHeader, 0, HEADER_SIZE);
 		System.arraycopy(ByteBuffer.allocate(Integer.BYTES).order(ByteOrder.BIG_ENDIAN)

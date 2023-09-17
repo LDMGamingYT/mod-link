@@ -33,7 +33,7 @@ public class ModFilePacketParser {
 	public static int getSizeFromPacket(byte[] packet) {
 		byte[] sizeBytes = new byte[Integer.BYTES];
 		System.out.println("SBytes Buffer: "+Arrays.toString(sizeBytes));
-        System.arraycopy(packet, 3, sizeBytes, 0, Integer.BYTES);
+        System.arraycopy(packet, HEADER_SIZE, sizeBytes, 0, Integer.BYTES);
 		System.out.println("Packet: "+Arrays.toString(packet));
 		System.out.println("SBytes: "+Arrays.toString(sizeBytes));
 		System.out.println("SBytes as int: "+ByteBuffer.wrap(sizeBytes).getInt());
