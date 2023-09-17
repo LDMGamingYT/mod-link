@@ -1,6 +1,5 @@
 package net.ldm.mod_link;
 
-import io.netty.buffer.EmptyByteBuf;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -11,17 +10,13 @@ import net.ldm.mod_link.networking.packet.ModFilePacketParser;
 import net.ldm.mod_link.networking.packet.PacketChannels;
 import net.ldm.mod_link.screen.PromptScreen;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.MessageScreen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
-import net.minecraft.client.realms.gui.screen.RealmsMainScreen;
-import net.minecraft.network.PacketByteBuf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 @Environment(EnvType.CLIENT)
 public class ModLinkClient implements ClientModInitializer {
