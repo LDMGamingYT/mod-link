@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Contract;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ModFilePacketParser {
 	private final ArrayList<Byte> packet;
@@ -32,11 +31,7 @@ public class ModFilePacketParser {
 
 	public static int getSizeFromPacket(byte[] packet) {
 		byte[] sizeBytes = new byte[Integer.BYTES];
-		System.out.println("SBytes Buffer: "+Arrays.toString(sizeBytes));
         System.arraycopy(packet, HEADER_SIZE, sizeBytes, 0, Integer.BYTES);
-		System.out.println("Packet: "+Arrays.toString(packet));
-		System.out.println("SBytes: "+Arrays.toString(sizeBytes));
-		System.out.println("SBytes as int: "+ByteBuffer.wrap(sizeBytes).getInt());
 		return ByteBuffer.wrap(sizeBytes).order(ByteOrder.BIG_ENDIAN).getInt();
 	}
 

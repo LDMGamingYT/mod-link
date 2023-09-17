@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -92,15 +91,13 @@ public class ModLinkServer implements DedicatedServerModInitializer {
 
 		byte[] sizeHeader = new byte[SIZE_HEADER_SIZE];
 
-		System.out.println("we are sending " + totalSize + " as the total size");
+		LOG.info("Total size of all packets: {} bytes", totalSize);
 
 		System.arraycopy(START_OF_SIZE_HEADER, 0, sizeHeader, 0, HEADER_SIZE);
 		System.arraycopy(ByteBuffer.allocate(Integer.BYTES).order(ByteOrder.BIG_ENDIAN)
 				.putInt(totalSize).array(), 0, sizeHeader, HEADER_SIZE, Integer.BYTES);
 
 		out.add(sizeHeader);
-		System.out.println(Arrays.toString(sizeHeader));
-
 		return out;
 	}
 }
