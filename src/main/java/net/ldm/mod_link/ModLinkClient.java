@@ -37,7 +37,6 @@ public class ModLinkClient implements ClientModInitializer {
 
 		ArrayList<Byte> allReceivedBytes = new ArrayList<>();
 		ClientPlayNetworking.registerGlobalReceiver(PacketChannels.MOD_FILE, (client, handler, buf, responseSender) -> {
-			System.out.println(buf);
 			if (buf.readableBytes() == 0) {
 				LOG.info("Server has no mods!");
 				disconnect(client);
