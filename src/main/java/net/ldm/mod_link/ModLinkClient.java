@@ -34,7 +34,7 @@ public class ModLinkClient implements ClientModInitializer {
 
 		ArrayList<Byte> allReceivedBytes = new ArrayList<>();
 		ClientPlayNetworking.registerGlobalReceiver(PacketChannels.MOD_FILE, (client, handler, buf, responseSender) -> {
-			client.setScreen(new MessageScreen(Text.of("Handshake completed!")));
+			//client.setScreen(new MessageScreen(Text.of("Handshake completed!")));
 			byte[] receivedBytes = buf.readByteArray();
 
 			//client.setScreen(new MessageScreen(Text.of("Received " + receivedBytes.length + " bytes")));
