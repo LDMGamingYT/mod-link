@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -90,7 +91,8 @@ public class ModLinkServer implements DedicatedServerModInitializer {
 		byte[] sizeHeader = new byte[SIZE_HEADER_SIZE];
 
 		System.arraycopy(START_OF_SIZE_HEADER, 0, sizeHeader, 0, HEADER_SIZE);
-		System.arraycopy(ByteBuffer.allocate(Integer.BYTES).putInt(totalSize).array(), 0, sizeHeader, HEADER_SIZE, Integer.BYTES);
+		System.arraycopy(ByteBuffer.allocate(Integer.BYTES).order(ByteOrder.BIG_ENDIAN)
+				.putInt(totalSize).array(), 0, sizeHeader, HEADER_SIZE, Integer.BYTES);
 
 		out.add(sizeHeader);
 		System.out.println(Arrays.toString(sizeHeader));

@@ -4,6 +4,7 @@ import net.ldm.mod_link.ModLinkClient;
 import org.jetbrains.annotations.Contract;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -36,7 +37,7 @@ public class ModFilePacketParser {
 		System.out.println("Packet: "+Arrays.toString(packet));
 		System.out.println("SBytes: "+Arrays.toString(sizeBytes));
 		System.out.println("SBytes as int: "+ByteBuffer.wrap(sizeBytes).getInt());
-		return ByteBuffer.wrap(sizeBytes).getInt();
+		return ByteBuffer.wrap(sizeBytes).order(ByteOrder.BIG_ENDIAN).getInt();
 	}
 
 	public boolean checksumSize(int currentSize) {
