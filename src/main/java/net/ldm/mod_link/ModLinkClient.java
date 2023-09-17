@@ -29,7 +29,6 @@ public class ModLinkClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
 			if (askingServerForMods) {
-				LOG.info("Asking server for mods");
 				showMessage(client, "Asking server for mods...");
 				ClientPlayNetworking.send(PacketChannels.ASK_SERVER_FOR_MODS, PacketByteBufs.empty());
 				askingServerForMods = false;
@@ -40,7 +39,6 @@ public class ModLinkClient implements ClientModInitializer {
 		int[] checksumSize = {-1};
 		ClientPlayNetworking.registerGlobalReceiver(PacketChannels.MOD_FILE, (client, handler, buf, responseSender) -> {
 			if (buf.readableBytes() == 0) {
-				LOG.info("Server has no mods!");
 				disconnect(client, "Server has no mods! Nothing downloaded.");
 				return;
 			}
@@ -53,14 +51,11 @@ public class ModLinkClient implements ClientModInitializer {
 			}
 
 			showMessage(client, "Received " + receivedBytes.length + " bytes");
-			LOG.info("Received " + receivedBytes.length + " bytes");
 			for (byte b: receivedBytes) allReceivedBytes.add(b);
 
 			showMessage(client, "Parsing mod files...");
 			ModFilePacketParser parser = new ModFilePacketParser(allReceivedBytes, checksumSize[0]);
-			LOG.info("Created " + parser);
 			if (!parser.checksumSize(allReceivedBytes.size())) return;
-			LOG.info("Checksum passed! Packet complete.");
 			showMessage(client, "Done!");
 			disconnect(client, "Downloaded all mods!");
 		});
@@ -79,6 +74,7 @@ public class ModLinkClient implements ClientModInitializer {
 	}
 
 	private void showMessage(@NotNull MinecraftClient client, String message) {
+		LOG.info(message);
 		client.execute(() -> client.setScreen(new MessageScreen(Text.literal(message))));
 	}
 }
