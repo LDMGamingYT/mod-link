@@ -12,6 +12,7 @@ import net.ldm.mod_link.screen.PromptScreen;
 import net.ldm.mod_link.screen.PromptScreens;
 import net.ldm.mod_link.screen.YesNoScreen;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.MessageScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
@@ -31,20 +32,12 @@ import java.util.Map;
 public class ModLinkClient implements ClientModInitializer {
 	public static final Logger LOG = LogManager.getLogger(ModLinkClient.class);
 	public static boolean askingServerForMods = false;
+	ArrayList<Byte> allReceivedBytes = new ArrayList<>();
 
 	@Override
 	public void onInitializeClient() {
-		ArrayList<Byte> allReceivedBytes = new ArrayList<>();
 
-		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-			if (askingServerForMods) {
-				allReceivedBytes.clear();
-				showMessage(client, "Asking server for mods...");
-				ClientPlayNetworking.send(PacketChannels.ASK_SERVER_FOR_MODS, PacketByteBufs.empty());
-				askingServerForMods = false;
-				showMessage(client, "Handshake completed!");
-			}
-		});
+		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> client.setScreen(new DownloadModsPromptScreen(client)));
 
 		int[] checksumSize = {-1};
 		ClientPlayNetworking.registerGlobalReceiver(PacketChannels.MOD_FILE, (client, handler, buf, responseSender) -> {
@@ -83,9 +76,9 @@ public class ModLinkClient implements ClientModInitializer {
 	/**
 	 * This ONLY works if connected to a server, it will CRASH the game if used otherwise.
 	 */
-	private void disconnect(@NotNull MinecraftClient client, Screen screen) {
-        assert client.world != null;
-        client.execute(() -> {
+	private static void disconnect(@NotNull MinecraftClient client, Screen screen) {
+		assert client.world != null;
+		client.execute(() -> {
 			client.world.disconnect();
 			client.disconnect();
 			client.setScreen(screen);
@@ -95,5 +88,36 @@ public class ModLinkClient implements ClientModInitializer {
 	private void showMessage(@NotNull MinecraftClient client, String message) {
 		LOG.info(message);
 		client.execute(() -> client.setScreen(new MessageScreen(Text.literal(message))));
+	}
+
+	public final class DownloadModsPromptScreen extends YesNoScreen implements YesNoScreen.Listener {
+		private final MinecraftClient client;
+		public DownloadModsPromptScreen(MinecraftClient client) {
+			super("This will delete ALL existing mods in this installation?", new MultiplayerScreen(new TitleScreen()));
+			setListener(this);
+			this.client = client;
+		}
+
+		@Override
+		public void onYesButtonPressed() {
+			if (askingServerForMods) {
+				allReceivedBytes.clear();
+				showMessage(client, "Asking server for mods...");
+				ClientPlayNetworking.send(PacketChannels.ASK_SERVER_FOR_MODS, PacketByteBufs.empty());
+				askingServerForMods = false;
+				showMessage(client, "Handshake completed!");
+			}
+		}
+
+		@Override
+		public void onNoButtonPressed() {
+			disconnect(client, new MultiplayerScreen(new TitleScreen()));
+		}
+
+		@Override
+		public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+			super.render(context, mouseX, mouseY, delta);
+			context.drawCenteredTextWithShadow(textRenderer, Text.of("Are you sure you want to continue?"), this.width / 2, 80, 0xFFFFFF);
+		}
 	}
 }
