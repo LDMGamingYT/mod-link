@@ -17,16 +17,11 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static net.ldm.mod_link.networking.packet.ModFilePacketParser.*;
+
 public class ModLinkServer implements DedicatedServerModInitializer {
 	public static final Logger LOG = LogManager.getLogger(ModLinkServer.class);
 	private static final File MODS_DIR = Paths.get(System.getProperty("user.dir")).resolve("mods").toFile();
-	private static final byte[] START_OF_HEADER = {0x04, 0x02, 0x01};
-	private static final byte[] START_OF_FILE = {0x04, 0x02, 0x02};
-	private static final byte[] START_OF_SIZE_HEADER = {0x04, 0x02, 0x03};
-	private static final byte[] END_OF_FILE = {0x04, 0x03, 0x02};
-	private static final byte[] END_OF_SIZE_HEADER = {0x04, 0x03, 0x03};
-	private static final int HEADER_SIZE = 3;
-	private static final int SIZE_HEADER_SIZE = HEADER_SIZE + Integer.BYTES + HEADER_SIZE;
 
 	@Override
 	public void onInitializeServer() {
