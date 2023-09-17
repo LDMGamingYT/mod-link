@@ -18,6 +18,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.text.Text;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -101,11 +102,17 @@ public class ModLinkClient implements ClientModInitializer {
 		@Override
 		public void onYesButtonPressed() {
 			if (askingServerForMods) {
-				allReceivedBytes.clear();
-				showMessage(client, "Asking server for mods...");
-				ClientPlayNetworking.send(PacketChannels.ASK_SERVER_FOR_MODS, PacketByteBufs.empty());
-				askingServerForMods = false;
-				showMessage(client, "Handshake completed!");
+				try {
+					showMessage(client, "Deleting existing mods...");
+					FileUtils.cleanDirectory(ModLinkServer.MODS_DIR.toFile());
+					allReceivedBytes.clear();
+					showMessage(client, "Asking server for mods...");
+					ClientPlayNetworking.send(PacketChannels.ASK_SERVER_FOR_MODS, PacketByteBufs.empty());
+					askingServerForMods = false;
+					showMessage(client, "Handshake completed!");
+				} catch (IOException e) {
+					disconnect(client, new PromptScreen("Failed to delete existing mods: " + e.getMessage(), new MultiplayerScreen(new TitleScreen())));
+				}
 			}
 		}
 
