@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.ldm.mod_link.networking.packet.ModFilePacketParser;
 import net.ldm.mod_link.networking.packet.PacketChannels;
 import net.ldm.mod_link.screen.PromptScreen;
+import net.ldm.mod_link.screen.PromptScreens;
 import net.ldm.mod_link.screen.YesNoScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.MessageScreen;
@@ -64,7 +65,7 @@ public class ModLinkClient implements ClientModInitializer {
 			showMessage(client, "Parsing mod files...");
 			ModFilePacketParser parser = new ModFilePacketParser(allReceivedBytes, checksumSize[0]);
 			if (!parser.checksumSize(allReceivedBytes.size())) return;
-			disconnect(client, new RestartPromptScreen());
+			disconnect(client, new PromptScreens.RestartPromptScreen());
 			try {
 				writeFiles(parser.getFiles());
 			} catch (IOException e) {
@@ -94,22 +95,5 @@ public class ModLinkClient implements ClientModInitializer {
 	private void showMessage(@NotNull MinecraftClient client, String message) {
 		LOG.info(message);
 		client.execute(() -> client.setScreen(new MessageScreen(Text.literal(message))));
-	}
-
-	private static final class RestartPromptScreen extends YesNoScreen implements YesNoScreen.Listener {
-		public RestartPromptScreen() {
-			super("Downloaded all mods! Quit game?", new MultiplayerScreen(new TitleScreen()));
-			setListener(this);
-		}
-
-		@Override
-		public void onYesButtonPressed() {
-			System.exit(0);
-		}
-
-		@Override
-		public void onNoButtonPressed() {
-			close();
-		}
 	}
 }
