@@ -51,6 +51,7 @@ public class ModLinkServer implements DedicatedServerModInitializer {
 		if (mods.length == 0) return null;
 
 		for (File mod: mods) {
+			LOG.info("Reading " + mod.getName());
 			byte[] fileData = FileUtils.readFileToByteArray(mod);
 			byte[] fileNameBytes = mod.getName().getBytes();
 
