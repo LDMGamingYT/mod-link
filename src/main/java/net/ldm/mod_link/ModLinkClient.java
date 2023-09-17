@@ -36,8 +36,9 @@ public class ModLinkClient implements ClientModInitializer {
 			for (byte b: receivedBytes) allReceivedBytes.add(b);
 
 			ModFilePacketParser parser = new ModFilePacketParser(allReceivedBytes);
+			LOG.info("Created " + parser);
 			if (!parser.checksumSize(allReceivedBytes.size())) return;
-			LOG.info("Stitched together " + parser);
+			LOG.info("Checksum passed! Packet complete.");
 		});
 	}
 }
