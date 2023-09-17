@@ -37,7 +37,7 @@ public class ModFilePacketParser {
 	}
 
 	public boolean checksumSize(int currentSize) {
-		ModLinkClient.LOG.info("Got {} bytes, expecting {} bytes. Checksum passed? {}", currentSize, totalSize, currentSize == totalSize);
+		ModLinkClient.LOG.debug("Got {} bytes, expecting {} bytes. Checksum passed? {}", currentSize, totalSize, currentSize == totalSize);
 		return totalSize == currentSize;
 	}
 
