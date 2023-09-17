@@ -9,8 +9,10 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.ldm.mod_link.networking.packet.ModFilePacketParser;
 import net.ldm.mod_link.networking.packet.PacketChannels;
 import net.ldm.mod_link.screen.PromptScreen;
+import net.ldm.mod_link.screen.YesNoScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.MessageScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.text.Text;
@@ -46,7 +48,7 @@ public class ModLinkClient implements ClientModInitializer {
 		int[] checksumSize = {-1};
 		ClientPlayNetworking.registerGlobalReceiver(PacketChannels.MOD_FILE, (client, handler, buf, responseSender) -> {
 			if (buf.readableBytes() == 0) {
-				disconnect(client, "Server has no mods! Nothing downloaded.");
+				disconnect(client, new PromptScreen("Server has no mods! Nothing downloaded.", new MultiplayerScreen(new TitleScreen())));
 				return;
 			}
 
@@ -62,7 +64,7 @@ public class ModLinkClient implements ClientModInitializer {
 			showMessage(client, "Parsing mod files...");
 			ModFilePacketParser parser = new ModFilePacketParser(allReceivedBytes, checksumSize[0]);
 			if (!parser.checksumSize(allReceivedBytes.size())) return;
-			disconnect(client, "Downloaded all mods!");
+			disconnect(client, new RestartPromptScreen());
 			try {
 				writeFiles(parser.getFiles());
 			} catch (IOException e) {
@@ -80,17 +82,34 @@ public class ModLinkClient implements ClientModInitializer {
 	/**
 	 * This ONLY works if connected to a server, it will CRASH the game if used otherwise.
 	 */
-	private void disconnect(@NotNull MinecraftClient client, String message) {
+	private void disconnect(@NotNull MinecraftClient client, Screen screen) {
         assert client.world != null;
         client.execute(() -> {
 			client.world.disconnect();
 			client.disconnect();
-			client.setScreen(new PromptScreen(message, new MultiplayerScreen(new TitleScreen())));
+			client.setScreen(screen);
 		});
 	}
 
 	private void showMessage(@NotNull MinecraftClient client, String message) {
 		LOG.info(message);
 		client.execute(() -> client.setScreen(new MessageScreen(Text.literal(message))));
+	}
+
+	private static final class RestartPromptScreen extends YesNoScreen implements YesNoScreen.Listener {
+		public RestartPromptScreen() {
+			super("Downloaded all mods! Quit game?", new MultiplayerScreen(new TitleScreen()));
+			setListener(this);
+		}
+
+		@Override
+		public void onYesButtonPressed() {
+			System.exit(0);
+		}
+
+		@Override
+		public void onNoButtonPressed() {
+			close();
+		}
 	}
 }
