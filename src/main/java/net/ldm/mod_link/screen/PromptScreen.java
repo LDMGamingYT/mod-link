@@ -7,9 +7,11 @@ import net.minecraft.text.Text;
 
 public class PromptScreen extends Screen {
 	private Listener listener;
+	private final Screen parent;
 
-	public PromptScreen(String message) {
+	public PromptScreen(String message, Screen parent) {
 		super(Text.of(message));
+		this.parent = parent;
 	}
 
 	@Override
@@ -27,7 +29,8 @@ public class PromptScreen extends Screen {
 
 	@Override
 	public void close() {
-		super.close();
+        assert this.client != null;
+        this.client.setScreen(parent);
 		if (listener != null) listener.onClose();
 	}
 

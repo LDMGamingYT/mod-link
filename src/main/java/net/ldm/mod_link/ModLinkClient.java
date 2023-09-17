@@ -74,7 +74,7 @@ public class ModLinkClient implements ClientModInitializer {
         client.execute(() -> {
 			client.world.disconnect();
 			client.disconnect();
-			client.setScreen(new PromptScreen("Server has no mods! Nothing downloaded."));
+			client.setScreen(new PromptScreen("Server has no mods! Nothing downloaded.", new MultiplayerScreen(new TitleScreen())));
 		});
 	}
 }
