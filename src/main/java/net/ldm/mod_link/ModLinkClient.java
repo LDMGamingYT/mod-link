@@ -10,8 +10,10 @@ import net.ldm.mod_link.networking.packet.ModFilePacketParser;
 import net.ldm.mod_link.networking.packet.PacketChannels;
 import net.ldm.mod_link.screen.PromptScreen;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.MessageScreen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
+import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -28,8 +30,7 @@ public class ModLinkClient implements ClientModInitializer {
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
 			if (askingServerForMods) {
 				LOG.info("Asking server for mods");
-				// TODO #7: 2023-09-17 Show screen that says downloading mods once connected
-				//client.setScreen(new MessageScreen(Text.of("Asking server for mods...")));
+				showMessage(client, "Asking server for mods...");
 				ClientPlayNetworking.send(PacketChannels.ASK_SERVER_FOR_MODS, PacketByteBufs.empty());
 				askingServerForMods = false;
 			}
@@ -44,24 +45,24 @@ public class ModLinkClient implements ClientModInitializer {
 				return;
 			}
 
-			//client.setScreen(new MessageScreen(Text.of("Handshake completed!")));
+			showMessage(client, "Handshake completed!");
 			byte[] receivedBytes = buf.readByteArray();
 
 			if (ModFilePacketParser.doesPacketDefineSize(receivedBytes)) {
 				checksumSize[0] = ModFilePacketParser.getSizeFromPacket(receivedBytes);
 			}
 
-			//client.setScreen(new MessageScreen(Text.of("Received " + receivedBytes.length + " bytes")));
+			showMessage(client, "Received " + receivedBytes.length + " bytes");
 			LOG.info("Received " + receivedBytes.length + " bytes");
 			for (byte b: receivedBytes) allReceivedBytes.add(b);
 
-			//client.setScreen(new MessageScreen(Text.of("Parsing mod files...")));
+			showMessage(client, "Parsing mod files...");
 			ModFilePacketParser parser = new ModFilePacketParser(allReceivedBytes, checksumSize[0]);
 			LOG.info("Created " + parser);
 			if (!parser.checksumSize(allReceivedBytes.size())) return;
 			LOG.info("Checksum passed! Packet complete.");
-			//client.setScreen(new MessageScreen(Text.of("Done!")));
-			disconnect(client, "Downloaded all mods!"); // Disconnect once checksum has passed, full packet has been retrieved.
+			showMessage(client, "Done!");
+			disconnect(client, "Downloaded all mods!");
 		});
 	}
 
@@ -75,5 +76,9 @@ public class ModLinkClient implements ClientModInitializer {
 			client.disconnect();
 			client.setScreen(new PromptScreen(message, new MultiplayerScreen(new TitleScreen())));
 		});
+	}
+
+	private void showMessage(@NotNull MinecraftClient client, String message) {
+		client.execute(() -> client.setScreen(new MessageScreen(Text.literal(message))));
 	}
 }
