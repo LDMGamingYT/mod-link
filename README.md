@@ -9,14 +9,4 @@ No more hassle trying to send the mod files, just get your players to press the 
 
 ## Technical Details
 
-This mod uses the UDP protocol to share mods in a **read-only** environment across the internet.
-
-**You should use port `25560` for Mod Link. You can use another port, but Mod Link will NOT be able to find it automatically.**
-
-**TODO:** Change this to the correct documentation if UDP works
-
-### Using another port
-
-Mod Link will **always** use port `25560` internally, but if you wanted to, you can port-forward `25560` to any other port. This is highly discourgaged, as Mod Link will require your players to enter the unqie port every time they want to download the mods.
-
-**To keep this simple, just port-forward `25560` to `25560`. This ensures Mod Link can find it automatically.**
+This mod uses a secure TCP connection to transfer mod files using packets in 1 MB large chunks.
