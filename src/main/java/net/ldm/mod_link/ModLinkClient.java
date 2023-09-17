@@ -32,6 +32,7 @@ public class ModLinkClient implements ClientModInitializer {
 				showMessage(client, "Asking server for mods...");
 				ClientPlayNetworking.send(PacketChannels.ASK_SERVER_FOR_MODS, PacketByteBufs.empty());
 				askingServerForMods = false;
+				showMessage(client, "Handshake completed!");
 			}
 		});
 
@@ -43,7 +44,6 @@ public class ModLinkClient implements ClientModInitializer {
 				return;
 			}
 
-			showMessage(client, "Handshake completed!");
 			byte[] receivedBytes = buf.readByteArray();
 
 			if (ModFilePacketParser.doesPacketDefineSize(receivedBytes)) {
