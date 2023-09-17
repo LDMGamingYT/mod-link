@@ -3,8 +3,11 @@ package net.ldm.mod_link;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.networking.v1.ClientLoginConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.ldm.mod_link.networking.packet.ModFilePacketParser;
 import net.ldm.mod_link.networking.packet.PacketChannels;
@@ -37,7 +40,6 @@ public class ModLinkClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> client.setScreen(new DownloadModsPromptScreen(client)));
 
 		int[] checksumSize = {-1};

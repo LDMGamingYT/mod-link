@@ -2,6 +2,8 @@ package net.ldm.mod_link;
 
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerLoginNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.ldm.mod_link.networking.packet.PacketChannels;
 import org.apache.commons.io.FileUtils;
@@ -15,7 +17,11 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 import static net.ldm.mod_link.networking.packet.ModFilePacketParser.*;
 
@@ -23,8 +29,26 @@ public class ModLinkServer implements DedicatedServerModInitializer {
 	public static final Logger LOG = LogManager.getLogger(ModLinkServer.class);
 	protected static final Path MODS_DIR = Paths.get(System.getProperty("user.dir")).resolve("mods");
 
+	private ServerLoginNetworking.LoginQueryResponseHandler clientLoginHandler(Consumer<Boolean> callback) {
+		return (server, handler, understood, buf, synchronizer, responseSender) -> {
+			if (buf == null) return;
+
+			CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
+				boolean response = buf.readBoolean();
+				if (response) System.out.println("Sending mods");
+				return true;
+			}, server);
+
+			synchronizer.waitFor(future.thenAccept(callback));
+		};
+	}
+
 	@Override
 	public void onInitializeServer() {
+		ServerLoginConnectionEvents.QUERY_START.register((handler, server, sender, synchronizer) -> {
+			sender.sendPacket(PacketChannels.CLIENT_LOGIN_HANDLER, PacketByteBufs.create());
+		});
+
 		ServerPlayNetworking.registerGlobalReceiver(PacketChannels.ASK_SERVER_FOR_MODS, (server, player, handler, buf, responseSender) -> {
 			try {
 				List<byte[]> packet = readMods();
