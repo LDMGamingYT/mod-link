@@ -11,15 +11,22 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 public class ModLinkServer implements DedicatedServerModInitializer {
 	public static final Logger LOG = LogManager.getLogger(ModLinkServer.class);
 	private static final File MODS_DIR = Paths.get(System.getProperty("user.dir")).resolve("mods").toFile();
-	private static final byte[] START_OF_HEADER = { 0x04, 0x02, 0x01 };
-	private static final byte[] START_OF_FILE = { 0x04, 0x02, 0x02 };
-	private static final byte[] END_OF_FILE = { 0x04, 0x03 };
+	private static final byte[] START_OF_HEADER = {0x04, 0x02, 0x01};
+	private static final byte[] START_OF_FILE = {0x04, 0x02, 0x02};
+	private static final byte[] START_OF_SIZE_HEADER = {0x04, 0x02, 0x03};
+	private static final byte[] END_OF_FILE = {0x04, 0x03, 0x02};
+	private static final byte[] END_OF_SIZE_HEADER = {0x04, 0x03, 0x03};
+	private static final int HEADER_SIZE = 3;
+	private static final int SIZE_HEADER_SIZE = HEADER_SIZE + Integer.BYTES + HEADER_SIZE;
 
 	@Override
 	public void onInitializeServer() {
@@ -37,30 +44,32 @@ public class ModLinkServer implements DedicatedServerModInitializer {
 
 	private @NotNull Set<byte[]> readMods() throws IOException {
 		Set<byte[]> out = new HashSet<>();
+		int totalSize = 0;
+
 		for (File modFile: Objects.requireNonNull(MODS_DIR.listFiles())) {
 			byte[] fileData = FileUtils.readFileToByteArray(modFile);
 			byte[] fileNameBytes = modFile.getName().getBytes();
 
-			byte[] result = new byte[START_OF_HEADER.length + fileNameBytes.length + START_OF_FILE.length + fileData.length + END_OF_FILE.length];
+			byte[] result = new byte[HEADER_SIZE + fileNameBytes.length + HEADER_SIZE + fileData.length + HEADER_SIZE];
 
 			int index = 0;
 
-			System.arraycopy(START_OF_HEADER, 0, result, index, START_OF_HEADER.length);
-			index += START_OF_HEADER.length;
+			System.arraycopy(START_OF_HEADER, 0, result, index, HEADER_SIZE);
+			index += HEADER_SIZE;
 
 			System.arraycopy(fileNameBytes, 0, result, index, fileNameBytes.length);
 			index += fileNameBytes.length;
 
-			System.arraycopy(START_OF_FILE, 0, result, index, START_OF_FILE.length);
-			index += START_OF_FILE.length;
+			System.arraycopy(START_OF_FILE, 0, result, index, HEADER_SIZE);
+			index += HEADER_SIZE;
 
 			System.arraycopy(fileData, 0, result, index, fileData.length);
 			index += fileData.length;
 
-			System.arraycopy(END_OF_FILE, 0, result, index, END_OF_FILE.length);
+			System.arraycopy(END_OF_FILE, 0, result, index, HEADER_SIZE);
 
 			int splitLength = 1000000;
-			int numOfChunks = (int)Math.ceil((double)result.length / splitLength);
+			int numOfChunks = (int) Math.ceil((double) result.length / splitLength);
 			for (int i = 0; i < numOfChunks; i++) {
 				int start = i * splitLength;
 				int length = Math.min(result.length - start, splitLength);
@@ -69,8 +78,24 @@ public class ModLinkServer implements DedicatedServerModInitializer {
 				System.arraycopy(result, start, part, 0, length);
 
 				out.add(part);
+				totalSize += length + SIZE_HEADER_SIZE;
 			}
 		}
+
+		byte[] sizeHeader = new byte[SIZE_HEADER_SIZE];
+
+		int index = 0;
+
+		System.arraycopy(START_OF_SIZE_HEADER, 0, sizeHeader, index, HEADER_SIZE);
+		index += HEADER_SIZE;
+
+		System.arraycopy(ByteBuffer.allocate(Integer.BYTES).putInt(totalSize).array(), 0, sizeHeader, index, Integer.BYTES);
+		index += Integer.BYTES;
+
+		System.arraycopy(END_OF_SIZE_HEADER, 0, sizeHeader, index, HEADER_SIZE);
+
+		out.add(sizeHeader);
+
 		return out;
 	}
 }
