@@ -5,7 +5,9 @@ import org.jetbrains.annotations.Contract;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class ModFilePacketParser {
 	private final ArrayList<Byte> packet;
@@ -41,11 +43,50 @@ public class ModFilePacketParser {
 	}
 
 	public String getFileName() {
-		return "";
+		int startIndex = getIndexOfSection(START_OF_HEADER);
+		int length = getLengthOfSection(startIndex, START_OF_FILE);
+
+		if (startIndex == -1 || length == -1) return "unknown-mod-" + UUID.randomUUID();
+
+		byte[] bytes = new byte[length];
+		for (int i = 0; i < length; i++) {
+			bytes[i] = packet.get(startIndex + i);
+		}
+
+		return new String(bytes, StandardCharsets.UTF_8);
 	}
 
 	public byte[] getFileContents() {
 		return new byte[0];
+	}
+
+	/**
+	 * @return Index of where the data starts. Example: [4, 2, 3, 0, 0, 0, 0], index would be 3.
+	 */
+	private int getIndexOfSection(byte[] header) {
+		int i = 0;
+		while (i + HEADER_SIZE < packet.size()) {
+			if (packet.get(i) == header[0] &&
+				packet.get(i+1) == header[1] &&
+				packet.get(i+2) == header[2])
+				return i+3;
+			i++;
+		}
+		return -1;
+	}
+
+	private int getLengthOfSection(int startIndex, byte[] endHeader) {
+		int i = startIndex;
+
+		while (i + HEADER_SIZE < packet.size()) {
+			if (packet.get(i) == endHeader[0] &&
+					packet.get(i+1) == endHeader[1] &&
+					packet.get(i+2) == endHeader[2])
+				break;
+			i++;
+		}
+
+		return i - startIndex;
 	}
 
 	@Override
