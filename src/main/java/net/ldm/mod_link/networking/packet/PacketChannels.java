@@ -5,4 +5,5 @@ import net.minecraft.util.Identifier;
 
 public class PacketChannels {
 	public static final Identifier ASK_SERVER_FOR_MODS = new Identifier(ModLink.MODID, "ask_server_for_mods");
+	public static final Identifier MOD_FILE = new Identifier(ModLink.MODID, "mod_file");
 }
