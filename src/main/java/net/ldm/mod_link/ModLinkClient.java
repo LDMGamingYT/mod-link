@@ -23,6 +23,7 @@ public class ModLinkClient implements ClientModInitializer {
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
 			if (askingServerForMods) {
 				LOG.info("Asking server for mods");
+				// TODO #7: 2023-09-17 Show screen that says downloading mods once connected
 				ClientPlayNetworking.send(PacketChannels.ASK_SERVER_FOR_MODS, PacketByteBufs.empty());
 				askingServerForMods = false;
 			}
@@ -39,6 +40,7 @@ public class ModLinkClient implements ClientModInitializer {
 			LOG.info("Created " + parser);
 			if (!parser.checksumSize(allReceivedBytes.size())) return;
 			LOG.info("Checksum passed! Packet complete.");
+			client.disconnect(); // Disconnect once checksum has passed, full packet has been retrieved.
 		});
 	}
 }

@@ -27,7 +27,6 @@ public abstract class MultiplayerScreenMixin extends Screen {
 
 	@Inject(at = @At("HEAD"), method="init")
 	private void addDownloadModsButton(CallbackInfo ci) {
-		// TODO: 2023-09-13 Make the button gray when server not selected (like edit, delete, join server buttons)
 		downloadButton = this.addDrawableChild(ButtonWidget.builder(Text.literal("Download Mods"),
 						button -> askServerForMods())
 				.dimensions(5, 5, 100, 20)

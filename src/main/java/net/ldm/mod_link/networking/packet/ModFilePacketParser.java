@@ -17,7 +17,7 @@ public class ModFilePacketParser {
 		this.packet = packet;
 	}
 
-	/* TODO: 2023-09-16 This does NOT work, it gets the wrong size.
+	/* TODO #8: 2023-09-16 This does NOT work, it gets the wrong size.
 	 * For reference, call to checksum:
 	 * Got 1000077 bytes, expecting 1482777970 bytes. Checksum passed? false
 	 */
