@@ -27,8 +27,11 @@ public class ModLinkClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		ArrayList<Byte> allReceivedBytes = new ArrayList<>();
+
 		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
 			if (askingServerForMods) {
+				allReceivedBytes.clear();
 				showMessage(client, "Asking server for mods...");
 				ClientPlayNetworking.send(PacketChannels.ASK_SERVER_FOR_MODS, PacketByteBufs.empty());
 				askingServerForMods = false;
@@ -36,7 +39,6 @@ public class ModLinkClient implements ClientModInitializer {
 			}
 		});
 
-		ArrayList<Byte> allReceivedBytes = new ArrayList<>();
 		int[] checksumSize = {-1};
 		ClientPlayNetworking.registerGlobalReceiver(PacketChannels.MOD_FILE, (client, handler, buf, responseSender) -> {
 			if (buf.readableBytes() == 0) {
