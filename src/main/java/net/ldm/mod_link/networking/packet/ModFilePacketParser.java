@@ -6,8 +6,7 @@ import org.jetbrains.annotations.Contract;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.UUID;
+import java.util.*;
 
 public class ModFilePacketParser {
 	private final ArrayList<Byte> packet;
@@ -42,29 +41,40 @@ public class ModFilePacketParser {
 		return totalSize == currentSize;
 	}
 
-	public String getFileName() {
-		int startIndex = getIndexOfSection(START_OF_HEADER);
-		int length = getLengthOfSection(startIndex, START_OF_FILE);
+	/**
+	 * @return File name, file contents (bytes)
+	 */
+	public HashMap<String, byte[]> getFiles() {
+		HashMap<String, byte[]> out = new HashMap<>();
+		ArrayList<Integer> mods = getModIndices();
 
-		if (startIndex == -1 || length == -1) return "unknown-mod-" + UUID.randomUUID();
+		for (int startIndex: mods) {
+			int headerLength = getLengthOfSection(startIndex, START_OF_FILE);
+			int fileLength = getLengthOfSection(startIndex+headerLength, END_OF_FILE);
 
-		byte[] bytes = new byte[length];
-		for (int i = 0; i < length; i++) {
-			bytes[i] = packet.get(startIndex + i);
+			if (fileLength == -1) continue;
+
+			byte[] contentBytes = new byte[fileLength];
+			for (int j = 0; j < fileLength; j++) {
+				contentBytes[j] = packet.get((startIndex+headerLength) + j);
+			}
+
+			if (startIndex == -1 || headerLength == -1) out.put("unknown-mod-" + UUID.randomUUID(), contentBytes);
+
+			byte[] nameBytes = new byte[headerLength];
+			for (int j = 0; j < headerLength; j++) {
+				nameBytes[j] = packet.get(startIndex + j);
+			}
+
+			out.put(new String(nameBytes, StandardCharsets.UTF_8), contentBytes);
 		}
-
-		return new String(bytes, StandardCharsets.UTF_8);
-	}
-
-	public byte[] getFileContents() {
-		return new byte[0];
+		return out;
 	}
 
 	/**
 	 * @return Index of where the data starts. Example: [4, 2, 3, 0, 0, 0, 0], index would be 3.
 	 */
-	private int getIndexOfSection(byte[] header) {
-		int i = 0;
+	private int getIndexOfSection(byte[] header, int i) {
 		while (i + HEADER_SIZE < packet.size()) {
 			if (packet.get(i) == header[0] &&
 				packet.get(i+1) == header[1] &&
@@ -87,6 +97,20 @@ public class ModFilePacketParser {
 		}
 
 		return i - startIndex;
+	}
+
+	private ArrayList<Integer> getModIndices() {
+		ArrayList<Integer> out = new ArrayList<>();
+		int i = 0;
+		int j = 0;
+		while (j != -1) {
+			j = getIndexOfSection(START_OF_HEADER, i);
+			if (j != -1) {
+				i = j;
+				out.add(i);
+			}
+		}
+		return out;
 	}
 
 	@Override
