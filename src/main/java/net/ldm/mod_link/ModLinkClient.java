@@ -40,7 +40,7 @@ public class ModLinkClient implements ClientModInitializer {
 		ClientPlayNetworking.registerGlobalReceiver(PacketChannels.MOD_FILE, (client, handler, buf, responseSender) -> {
 			if (buf.readableBytes() == 0) {
 				LOG.info("Server has no mods!");
-				disconnect(client);
+				disconnect(client, "Server has no mods! Nothing downloaded.");
 				return;
 			}
 
@@ -61,19 +61,19 @@ public class ModLinkClient implements ClientModInitializer {
 			if (!parser.checksumSize(allReceivedBytes.size())) return;
 			LOG.info("Checksum passed! Packet complete.");
 			//client.setScreen(new MessageScreen(Text.of("Done!")));
-			disconnect(client); // Disconnect once checksum has passed, full packet has been retrieved.
+			disconnect(client, "Downloaded all mods!"); // Disconnect once checksum has passed, full packet has been retrieved.
 		});
 	}
 
 	/**
 	 * This ONLY works if connected to a server, it will CRASH the game if used otherwise.
 	 */
-	private void disconnect(@NotNull MinecraftClient client) {
+	private void disconnect(@NotNull MinecraftClient client, String message) {
         assert client.world != null;
         client.execute(() -> {
 			client.world.disconnect();
 			client.disconnect();
-			client.setScreen(new PromptScreen("Server has no mods! Nothing downloaded.", new MultiplayerScreen(new TitleScreen())));
+			client.setScreen(new PromptScreen(message, new MultiplayerScreen(new TitleScreen())));
 		});
 	}
 }
