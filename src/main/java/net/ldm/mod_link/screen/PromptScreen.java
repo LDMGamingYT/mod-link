@@ -22,7 +22,7 @@ public class PromptScreen extends Screen {
 
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-		this.renderBackground(context);
+		this.renderBackgroundTexture(context);
 		context.drawCenteredTextWithShadow(textRenderer, this.title, this.width / 2, 70, 0xFFFFFF);
 		super.render(context, mouseX, mouseY, delta);
 	}
