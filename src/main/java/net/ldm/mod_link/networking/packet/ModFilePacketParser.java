@@ -1,5 +1,6 @@
 package net.ldm.mod_link.networking.packet;
 
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Contract;
 
 import java.nio.ByteBuffer;
@@ -38,8 +39,8 @@ public class ModFilePacketParser {
 		return ByteBuffer.wrap(sizeBytes).getInt();
 	}
 
-	public boolean checksumSize(int currentSize) {
-		System.out.printf("Got %s bytes, expecting %s bytes. Checksum passed? %s%n", currentSize, totalSize, currentSize == totalSize);
+	public boolean checksumSize(int currentSize, Logger log) {
+		log.debug("Got {} bytes, expecting {} bytes. Checksum passed? {}}", currentSize, totalSize, currentSize == totalSize);
 		return totalSize == currentSize;
 	}
 

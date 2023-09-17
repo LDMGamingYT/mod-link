@@ -55,7 +55,7 @@ public class ModLinkClient implements ClientModInitializer {
 
 			showMessage(client, "Parsing mod files...");
 			ModFilePacketParser parser = new ModFilePacketParser(allReceivedBytes, checksumSize[0]);
-			if (!parser.checksumSize(allReceivedBytes.size())) return;
+			if (!parser.checksumSize(allReceivedBytes.size(), LOG)) return;
 			showMessage(client, "Done!");
 			disconnect(client, "Downloaded all mods!");
 		});
