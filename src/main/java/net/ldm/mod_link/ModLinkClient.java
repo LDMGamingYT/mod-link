@@ -18,7 +18,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @Environment(EnvType.CLIENT)
 public class ModLinkClient implements ClientModInitializer {
@@ -59,8 +63,18 @@ public class ModLinkClient implements ClientModInitializer {
 			ModFilePacketParser parser = new ModFilePacketParser(allReceivedBytes, checksumSize[0]);
 			if (!parser.checksumSize(allReceivedBytes.size())) return;
 			disconnect(client, "Downloaded all mods!");
-			System.out.println(parser.getFiles());
+			try {
+				writeFiles(parser.getFiles());
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 		});
+	}
+
+	private void writeFiles(HashMap<String, byte[]> map) throws IOException {
+		for (Map.Entry<String, byte[]> entry: map.entrySet()) {
+			Files.write(ModLinkServer.MODS_DIR.resolve(entry.getKey()), entry.getValue());
+		}
 	}
 
 	/**

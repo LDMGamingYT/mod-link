@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Objects;
@@ -22,7 +23,7 @@ import static net.ldm.mod_link.networking.packet.ModFilePacketParser.*;
 
 public class ModLinkServer implements DedicatedServerModInitializer {
 	public static final Logger LOG = LogManager.getLogger(ModLinkServer.class);
-	private static final File MODS_DIR = Paths.get(System.getProperty("user.dir")).resolve("mods").toFile();
+	protected static final Path MODS_DIR = Paths.get(System.getProperty("user.dir")).resolve("mods");
 
 	@Override
 	public void onInitializeServer() {
@@ -47,7 +48,7 @@ public class ModLinkServer implements DedicatedServerModInitializer {
 	private @Nullable Set<byte[]> readMods() throws IOException {
 		Set<byte[]> out = new HashSet<>();
 		int totalSize = 0;
-		File[] mods = Objects.requireNonNull(MODS_DIR.listFiles());
+		File[] mods = Objects.requireNonNull(MODS_DIR.toFile().listFiles());
 
 		if (mods.length == 0) return null;
 
