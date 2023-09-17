@@ -33,7 +33,7 @@ public class ModLinkClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		ArrayList<Byte> allReceivedBytes = new ArrayList<>();
 
-		ClientPlayConnectionEvents.INIT.register((handler, client) -> {
+		ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
 			if (askingServerForMods) {
 				allReceivedBytes.clear();
 				showMessage(client, "Asking server for mods...");
