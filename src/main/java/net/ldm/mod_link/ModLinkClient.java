@@ -36,6 +36,7 @@ public class ModLinkClient implements ClientModInitializer {
 		});
 
 		ArrayList<Byte> allReceivedBytes = new ArrayList<>();
+		int[] checksumSize = {-1};
 		ClientPlayNetworking.registerGlobalReceiver(PacketChannels.MOD_FILE, (client, handler, buf, responseSender) -> {
 			if (buf.readableBytes() == 0) {
 				LOG.info("Server has no mods!");
@@ -46,12 +47,16 @@ public class ModLinkClient implements ClientModInitializer {
 			//client.setScreen(new MessageScreen(Text.of("Handshake completed!")));
 			byte[] receivedBytes = buf.readByteArray();
 
+			if (ModFilePacketParser.doesPacketDefineSize(receivedBytes)) {
+				checksumSize[0] = ModFilePacketParser.getSizeFromPacket(receivedBytes);
+			}
+
 			//client.setScreen(new MessageScreen(Text.of("Received " + receivedBytes.length + " bytes")));
 			LOG.info("Received " + receivedBytes.length + " bytes");
 			for (byte b: receivedBytes) allReceivedBytes.add(b);
 
 			//client.setScreen(new MessageScreen(Text.of("Parsing mod files...")));
-			ModFilePacketParser parser = new ModFilePacketParser(allReceivedBytes);
+			ModFilePacketParser parser = new ModFilePacketParser(allReceivedBytes, checksumSize[0]);
 			LOG.info("Created " + parser);
 			if (!parser.checksumSize(allReceivedBytes.size())) return;
 			LOG.info("Checksum passed! Packet complete.");

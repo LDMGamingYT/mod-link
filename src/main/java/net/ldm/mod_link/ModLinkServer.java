@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -88,17 +89,11 @@ public class ModLinkServer implements DedicatedServerModInitializer {
 
 		byte[] sizeHeader = new byte[SIZE_HEADER_SIZE];
 
-		int index = 0;
-
-		System.arraycopy(START_OF_SIZE_HEADER, 0, sizeHeader, index, HEADER_SIZE);
-		index += HEADER_SIZE;
-
-		System.arraycopy(ByteBuffer.allocate(Integer.BYTES).putInt(totalSize).array(), 0, sizeHeader, index, Integer.BYTES);
-		index += Integer.BYTES;
-
-		System.arraycopy(END_OF_SIZE_HEADER, 0, sizeHeader, index, HEADER_SIZE);
+		System.arraycopy(START_OF_SIZE_HEADER, 0, sizeHeader, 0, HEADER_SIZE);
+		System.arraycopy(ByteBuffer.allocate(Integer.BYTES).putInt(totalSize).array(), 0, sizeHeader, HEADER_SIZE, Integer.BYTES);
 
 		out.add(sizeHeader);
+		System.out.println(Arrays.toString(sizeHeader));
 
 		return out;
 	}
