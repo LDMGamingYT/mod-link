@@ -15,9 +15,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static net.ldm.mod_link.networking.packet.ModFilePacketParser.*;
 
@@ -29,7 +27,7 @@ public class ModLinkServer implements DedicatedServerModInitializer {
 	public void onInitializeServer() {
 		ServerPlayNetworking.registerGlobalReceiver(PacketChannels.ASK_SERVER_FOR_MODS, (server, player, handler, buf, responseSender) -> {
 			try {
-				Set<byte[]> packet = readMods();
+				List<byte[]> packet = readMods();
 				if (packet == null) {
 					ServerPlayNetworking.send(player, PacketChannels.MOD_FILE, PacketByteBufs.empty());
 					return;
@@ -45,8 +43,8 @@ public class ModLinkServer implements DedicatedServerModInitializer {
 		});
 	}
 
-	private @Nullable Set<byte[]> readMods() throws IOException {
-		Set<byte[]> out = new HashSet<>();
+	private @Nullable List<byte[]> readMods() throws IOException {
+		List<byte[]> out = new ArrayList<>();
 		int totalSize = 0;
 		File[] mods = Objects.requireNonNull(MODS_DIR.toFile().listFiles());
 
